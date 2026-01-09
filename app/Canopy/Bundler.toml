@@ -1,0 +1,11 @@
+[apps.Canopy]
+product = "Canopy"
+version = "0.1.0"
+bundle_identifier = "com.canopy.app"
+category = "public.app-category.developer-tools"
+entitlements = "Canopy.entitlements"
+icon = "AppIcon.icns"
+
+[apps.Canopy.extra_plist_entries]
+LSUIElement = "1"
+NSHumanReadableCopyright = "Copyright 2026"

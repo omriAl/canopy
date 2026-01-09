@@ -347,6 +347,15 @@ private struct WorktreeRow: View {
                         }
                         .buttonStyle(.hover)
                         .help("Stop running process")
+
+                        Button {
+                            restartProcess()
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.system(size: 14))
+                        }
+                        .buttonStyle(.hover)
+                        .help("Restart process")
                     } else {
                         Button {
                             startProcess()

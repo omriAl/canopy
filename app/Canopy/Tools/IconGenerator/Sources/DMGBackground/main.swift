@@ -126,13 +126,11 @@ func drawText(_ text: String, at point: CGPoint, fontSize: CGFloat, color: CGCol
     context.restoreGState()
 }
 
-// Instructional text at bottom
-let textColor = CGColor(red: 0.7, green: 0.75, blue: 0.73, alpha: 0.9)
-drawText("Drag Canopy to Applications to install", at: CGPoint(x: width / 2, y: 340), fontSize: 14, color: textColor)
-
-// Subtitle
-let subtitleColor = CGColor(red: 0.5, green: 0.55, blue: 0.53, alpha: 0.7)
-drawText("Git worktree manager for macOS", at: CGPoint(x: width / 2, y: 365), fontSize: 11, color: subtitleColor)
+// Installation instructions (amber color for visibility)
+let instructionColor = CGColor(red: 0.85, green: 0.75, blue: 0.45, alpha: 0.9)
+drawText("1. Drag Canopy to Applications", at: CGPoint(x: width / 2, y: 320), fontSize: 13, color: instructionColor)
+drawText("2. Open System Settings \u{2192} Privacy & Security", at: CGPoint(x: width / 2, y: 345), fontSize: 13, color: instructionColor)
+drawText("3. Scroll down and click \"Open Anyway\"", at: CGPoint(x: width / 2, y: 370), fontSize: 13, color: instructionColor)
 
 // Create image from context
 guard let image = context.makeImage() else {

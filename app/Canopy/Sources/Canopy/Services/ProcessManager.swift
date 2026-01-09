@@ -33,6 +33,15 @@ final class ProcessManager {
         process.arguments = ["-c", command]
         process.currentDirectoryURL = URL(fileURLWithPath: worktreePath)
 
+        // Build PATH: custom path (if set) + common locations
+        var paths = ["/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin", "/usr/sbin", "/sbin"]
+        if let customPath = UserDefaults.standard.string(forKey: "canopy.customCLIPath"), !customPath.isEmpty {
+            paths.insert(customPath, at: 0)
+        }
+        process.environment = ProcessInfo.processInfo.environment.merging([
+            "PATH": paths.joined(separator: ":")
+        ]) { _, new in new }
+
         // Set up termination handler to clean up state
         process.terminationHandler = { [weak self] _ in
             DispatchQueue.main.async {

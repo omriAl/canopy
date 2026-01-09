@@ -39,25 +39,31 @@ echo "All prerequisites found."
 echo ""
 
 # Step 1: Generate assets (icon and DMG background)
-echo "Step 1/4: Generating assets..."
+echo "Step 1/5: Generating assets..."
 "$SCRIPT_DIR/generate-icon.sh"
 echo ""
 
 # Step 2: Build the app with swift-bundler
-echo "Step 2/4: Building app bundle..."
+echo "Step 2/5: Building app bundle..."
 cd "$CANOPY_DIR"
 ~/.mint/bin/swift-bundler bundle --configuration release
 echo "App bundle created at: $CANOPY_DIR/.build/bundler/Canopy.app"
 echo ""
 
 # Step 3: Bundle terminal-notifier
-echo "Step 3/4: Bundling terminal-notifier..."
+echo "Step 3/5: Bundling terminal-notifier..."
 cp -R "$CANOPY_DIR/Resources/terminal-notifier.app" "$CANOPY_DIR/.build/bundler/Canopy.app/Contents/Resources/"
 echo "terminal-notifier bundled into Canopy.app"
 echo ""
 
-# Step 4: Create DMG
-echo "Step 4/4: Creating DMG installer..."
+# Step 4: Sign app bundle (ad-hoc signing for Gatekeeper compatibility)
+echo "Step 4/5: Signing app bundle..."
+codesign --force --deep -s - "$CANOPY_DIR/.build/bundler/Canopy.app"
+echo "App bundle signed (ad-hoc)"
+echo ""
+
+# Step 5: Create DMG
+echo "Step 5/5: Creating DMG installer..."
 cd "$PROJECT_ROOT"
 "$SCRIPT_DIR/create-dmg.sh"
 

@@ -129,7 +129,7 @@ struct MenuBarMenuView: View {
             // Refresh button
             Button {
                 Task {
-                    await appState.refreshWorktrees()
+                    await appState.forceRefreshWorktrees()
                 }
             } label: {
                 Label("Refresh", systemImage: "arrow.clockwise")

@@ -17,6 +17,10 @@ final class AppState {
     var selectedTerminal: Terminal = .warp
     var customCLIPath: String?
     private var isRefreshing = false
+    private var lastRefreshTime: Date?
+
+    /// Minimum time between automatic refreshes (to avoid triggering file watchers)
+    private let refreshCooldown: TimeInterval = 5.0
 
     // GitHub PR status
     var ghError: GitHubError?
@@ -188,8 +192,27 @@ final class AppState {
 
     @MainActor
     func refreshWorktrees() async {
+        await refreshWorktreesInternal(force: false)
+    }
+
+    /// Force refresh worktrees, bypassing the cooldown (for explicit user action)
+    @MainActor
+    func forceRefreshWorktrees() async {
+        await refreshWorktreesInternal(force: true)
+    }
+
+    @MainActor
+    private func refreshWorktreesInternal(force: Bool) async {
         // Skip if refresh already in progress
         guard !isRefreshing else { return }
+
+        // Skip if recently refreshed (unless forced)
+        if !force, let lastRefresh = lastRefreshTime {
+            let elapsed = Date().timeIntervalSince(lastRefresh)
+            if elapsed < refreshCooldown {
+                return
+            }
+        }
 
         guard let repo = selectedRepository else {
             worktrees = []
@@ -201,6 +224,7 @@ final class AppState {
         defer {
             isLoading = false
             isRefreshing = false
+            lastRefreshTime = Date()
         }
 
         do {

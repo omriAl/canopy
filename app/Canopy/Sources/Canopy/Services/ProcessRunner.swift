@@ -40,7 +40,9 @@ final class ProcessRunner {
                 paths.insert(customPath, at: 0)
             }
             process.environment = ProcessInfo.processInfo.environment.merging([
-                "PATH": paths.joined(separator: ":")
+                "PATH": paths.joined(separator: ":"),
+                // Prevent git from updating stat cache, which triggers file watchers
+                "GIT_OPTIONAL_LOCKS": "0"
             ]) { _, new in new }
 
             do {
@@ -90,7 +92,9 @@ final class ProcessRunner {
             paths.insert(customPath, at: 0)
         }
         process.environment = ProcessInfo.processInfo.environment.merging([
-            "PATH": paths.joined(separator: ":")
+            "PATH": paths.joined(separator: ":"),
+            // Prevent git from updating stat cache, which triggers file watchers
+            "GIT_OPTIONAL_LOCKS": "0"
         ]) { _, new in new }
 
         try process.run()

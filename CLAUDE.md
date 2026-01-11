@@ -111,11 +111,3 @@ The app icon is generated programmatically via `app/Canopy/Tools/IconGenerator/`
 
 ### Unsigned App Note
 The app is not code-signed. Users must right-click and select "Open" on first launch to bypass Gatekeeper.
-
-## Task Management
-
-This project uses a task management system in the `tasks/` directory:
-- `tasks/_index.md` - Task index and status overview
-- `tasks/SPEC-canopy-app.md` - Full application specification
-
-Commands: `add task`, `update task [ID]`, `show tasks [filter]`

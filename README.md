@@ -164,4 +164,24 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request.
+Contributions are welcome! Here's how you can help:
+
+### Reporting Bugs
+Open an issue with:
+- Your macOS version
+- Steps to reproduce the problem
+- Expected vs actual behavior
+- Screenshots if applicable
+
+### Suggesting Features
+Open an issue to discuss your idea before implementing. This helps ensure the feature aligns with the project's goals.
+
+### Submitting Pull Requests
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Make your changes
+4. Ensure the app builds (`swift build` in `app/Canopy/`)
+5. Test your changes manually
+6. Submit a pull request
+
+Please follow the existing code style and patterns in the codebase.

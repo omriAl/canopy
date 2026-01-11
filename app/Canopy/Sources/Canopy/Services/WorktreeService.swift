@@ -99,11 +99,31 @@ final class WorktreeService {
         if force {
             args.append("--force")
         }
-        _ = try await processRunner.run(
-            "/usr/bin/env",
-            arguments: args,
-            workingDirectory: repoPath
-        )
+
+        do {
+            _ = try await processRunner.run(
+                "/usr/bin/env",
+                arguments: args,
+                workingDirectory: repoPath
+            )
+        } catch {
+            // git worktree remove --force fails with "Directory not empty" when there are
+            // untracked files. In this case, manually delete the directory and prune.
+            let errorMessage = error.localizedDescription
+            if errorMessage.contains("Directory not empty") {
+                // Manually delete the worktree directory
+                try FileManager.default.removeItem(atPath: worktreePath)
+
+                // Prune stale worktree references
+                _ = try await processRunner.run(
+                    "/usr/bin/env",
+                    arguments: ["git", "worktree", "prune"],
+                    workingDirectory: repoPath
+                )
+            } else {
+                throw error
+            }
+        }
     }
 
     /// Launch AI tool (Claude) in a worktree (synchronous, non-blocking)

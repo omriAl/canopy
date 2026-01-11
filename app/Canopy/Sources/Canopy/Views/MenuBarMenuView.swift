@@ -155,7 +155,6 @@ private struct WorktreeRow: View {
     let worktree: Worktree
     @Environment(AppState.self) private var appState
     @State private var isHovering = false
-    @State private var showingDeleteConfirmation = false
     @State private var isDeleting = false
     @State private var isRestarting = false
 
@@ -221,18 +220,6 @@ private struct WorktreeRow: View {
         }
         .contextMenu {
             contextMenuContent
-        }
-        .confirmationDialog(
-            "Remove worktree '\(worktree.branchName)'?",
-            isPresented: $showingDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Remove", role: .destructive) {
-                removeWorktree()
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This worktree has uncommitted changes that will be lost.")
         }
     }
 
@@ -325,7 +312,14 @@ private struct WorktreeRow: View {
                 // Show delete button for merged PRs
                 Button {
                     if worktree.isDirty {
-                        showingDeleteConfirmation = true
+                        let confirmed = AlertService.shared.showDestructiveConfirmation(
+                            title: "Remove worktree '\(worktree.branchName)'?",
+                            message: "This worktree has uncommitted changes that will be lost.",
+                            destructiveButtonTitle: "Remove"
+                        )
+                        if confirmed {
+                            removeWorktree()
+                        }
                     } else {
                         removeWorktree()
                     }
@@ -430,7 +424,14 @@ private struct WorktreeRow: View {
 
         Button("Remove Worktree", role: .destructive) {
             if worktree.isDirty {
-                showingDeleteConfirmation = true
+                let confirmed = AlertService.shared.showDestructiveConfirmation(
+                    title: "Remove worktree '\(worktree.branchName)'?",
+                    message: "This worktree has uncommitted changes that will be lost.",
+                    destructiveButtonTitle: "Remove"
+                )
+                if confirmed {
+                    removeWorktree()
+                }
             } else {
                 removeWorktree()
             }

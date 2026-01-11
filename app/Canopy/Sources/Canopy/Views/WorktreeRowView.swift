@@ -3,7 +3,6 @@ import SwiftUI
 struct WorktreeRowView: View {
     let worktree: Worktree
     @Environment(AppState.self) private var appState
-    @State private var showingDeleteConfirmation = false
     @State private var isDeleting = false
 
     var body: some View {
@@ -47,25 +46,20 @@ struct WorktreeRowView: View {
         .contextMenu {
             Button(role: .destructive) {
                 if worktree.isDirty {
-                    showingDeleteConfirmation = true
+                    let confirmed = AlertService.shared.showDestructiveConfirmation(
+                        title: "Remove worktree '\(worktree.branchName)'?",
+                        message: "This worktree has uncommitted changes that will be lost.",
+                        destructiveButtonTitle: "Remove"
+                    )
+                    if confirmed {
+                        removeWorktree()
+                    }
                 } else {
                     removeWorktree()
                 }
             } label: {
                 Label("Remove Worktree", systemImage: "trash")
             }
-        }
-        .confirmationDialog(
-            "Remove worktree '\(worktree.branchName)'?",
-            isPresented: $showingDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Remove", role: .destructive) {
-                removeWorktree()
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This worktree has uncommitted changes that will be lost.")
         }
     }
 

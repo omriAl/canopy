@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="treeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#34C759;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#30D158;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#treeGradient)"/>
+  <path d="M50 15C47 15 45 17 45 20V35C41 34 37 33 32 33C29 33 27 35 27 38V52C27 55 29 57 32 57C37 57 41 56 45 55V80C45 83 47 85 50 85C53 85 55 83 55 80V55C59 56 63 57 68 57C71 57 73 55 73 52V38C73 35 71 33 68 33C63 33 59 34 55 35V20C55 17 53 15 50 15Z" fill="white"/>
+</svg>

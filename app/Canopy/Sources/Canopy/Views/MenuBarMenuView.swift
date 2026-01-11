@@ -157,6 +157,7 @@ private struct WorktreeRow: View {
     @State private var isHovering = false
     @State private var showingDeleteConfirmation = false
     @State private var isDeleting = false
+    @State private var isRestarting = false
 
     private var isRunning: Bool {
         appState.processManager.isRunning(worktreePath: worktree.path)
@@ -353,9 +354,12 @@ private struct WorktreeRow: View {
                         } label: {
                             Image(systemName: "arrow.clockwise")
                                 .font(.system(size: 14))
+                                .rotationEffect(.degrees(isRestarting ? 360 : 0))
+                                .animation(isRestarting ? .linear(duration: 0.5).repeatForever(autoreverses: false) : .default, value: isRestarting)
                         }
                         .buttonStyle(.hover)
                         .help("Restart process")
+                        .disabled(isRestarting)
                     } else {
                         Button {
                             startProcess()
@@ -449,9 +453,15 @@ private struct WorktreeRow: View {
     }
 
     private func restartProcess() {
+        isRestarting = true
         do {
             try appState.restartProcess(for: worktree)
+            // Brief delay so user sees the animation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                isRestarting = false
+            }
         } catch {
+            isRestarting = false
             Task { @MainActor in
                 AlertService.shared.showError(
                     title: "Failed to Restart Process",

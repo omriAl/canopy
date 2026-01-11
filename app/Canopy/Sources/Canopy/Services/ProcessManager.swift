@@ -46,8 +46,11 @@ final class ProcessManager {
         ]) { _, new in new }
 
         // Set up termination handler to clean up state
-        process.terminationHandler = { [weak self] _ in
+        process.terminationHandler = { [weak self] terminatedProcess in
             DispatchQueue.main.async {
+                // Only remove if this is still the tracked process for this path
+                // (prevents stale handlers from removing a restarted process)
+                guard self?.processes[worktreePath]?.pid == terminatedProcess.processIdentifier else { return }
                 self?.processes.removeValue(forKey: worktreePath)
                 self?.endActivityIfNeeded()
             }

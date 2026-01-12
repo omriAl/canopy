@@ -1,10 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
-    <linearGradient id="treeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#34C759;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#30D158;stop-opacity:1" />
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#143230;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#194138;stop-opacity:1" />
     </linearGradient>
+    <!-- Highlights for each crown -->
+    <radialGradient id="highlight1" cx="40%" cy="40%" r="50%">
+      <stop offset="0%" style="stop-color:#335852;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#335852;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="highlight2" cx="40%" cy="40%" r="50%">
+      <stop offset="0%" style="stop-color:#4d8c73;stop-opacity:0.35" />
+      <stop offset="100%" style="stop-color:#4d8c73;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="highlight3" cx="40%" cy="40%" r="50%">
+      <stop offset="0%" style="stop-color:#73b394;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#73b394;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="highlight4" cx="40%" cy="40%" r="50%">
+      <stop offset="0%" style="stop-color:#a6d9bf;stop-opacity:0.45" />
+      <stop offset="100%" style="stop-color:#a6d9bf;stop-opacity:0" />
+    </radialGradient>
   </defs>
-  <circle cx="50" cy="50" r="48" fill="url(#treeGradient)"/>
-  <path d="M50 15C47 15 45 17 45 20V35C41 34 37 33 32 33C29 33 27 35 27 38V52C27 55 29 57 32 57C37 57 41 56 45 55V80C45 83 47 85 50 85C53 85 55 83 55 80V55C59 56 63 57 68 57C71 57 73 55 73 52V38C73 35 71 33 68 33C63 33 59 34 55 35V20C55 17 53 15 50 15Z" fill="white"/>
+
+  <!-- Background rounded rectangle -->
+  <rect x="0" y="0" width="100" height="100" rx="22" ry="22" fill="url(#bgGradient)"/>
+
+  <!-- Crown 1: Back layer - largest, center-bottom (deep forest) -->
+  <ellipse cx="48" cy="58" rx="28" ry="26" fill="#235546">
+    <animate attributeName="rx" values="28;27;28" dur="8s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="48" cy="58" rx="28" ry="26" fill="url(#highlight1)"/>
+
+  <!-- Crown 2: Middle-left layer (forest green) -->
+  <ellipse cx="35" cy="42" rx="22" ry="20" fill="#377d64"/>
+  <ellipse cx="35" cy="42" rx="22" ry="20" fill="url(#highlight2)"/>
+
+  <!-- Crown 3: Middle-right layer (bright sage) -->
+  <ellipse cx="62" cy="40" rx="21" ry="19" fill="#5aa582"/>
+  <ellipse cx="62" cy="40" rx="21" ry="19" fill="url(#highlight3)"/>
+
+  <!-- Crown 4: Front accent - small, bright, top-center (light mint) -->
+  <ellipse cx="50" cy="32" rx="13" ry="12" fill="#8cc8ab"/>
+  <ellipse cx="50" cy="32" rx="13" ry="12" fill="url(#highlight4)"/>
 </svg>

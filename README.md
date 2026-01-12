@@ -39,10 +39,21 @@ Multiply this by several parallel coding sessions, and you're spending more time
 - **Merge conflict detection** warns when PRs have conflicts
 - Requires [GitHub CLI](https://cli.github.com/) (`gh`) for PR features
 
+### Run Command
+- Configure a **run command** per repository (e.g., `npm run dev`, `python manage.py runserver`)
+- Click the **play button** next to any worktree to execute the command
+- Perfect for quickly starting development servers in each worktree
+
 ### Post-Create Hooks
 - Configure a **shell command to run** after creating a new worktree
 - Great for running `npm install`, `bundle install`, or any setup script
 - Configured per-repository in Settings
+
+### Workspace Links (CANOPY_URL.txt)
+- Add a clickable URL to any worktree for quick access
+- Create a file named `CANOPY_URL.txt` in your worktree root (e.g., `echo "http://localhost:5173" > CANOPY_URL.txt`)
+- Canopy displays a link icon you can click to open the URL
+- **Pro tip:** If using different ports for each workspace, use your post-create hook to generate this file
 
 ### Additional Features
 - **Launch at login** support
@@ -92,9 +103,20 @@ Access Settings via the gear icon in the menu or `Cmd+,`:
 
 - **Repositories**: Add, remove, and switch between Git repositories
 - **Terminal**: Choose between Warp and iTerm2
+- **Run Command**: Set a command to run when clicking the play button (per-repo, e.g., `npm run dev`)
 - **Post-Create Hook**: Set a command to run after creating worktrees (per-repo)
 - **Base Branch**: Configure which remote branch new worktrees are based on (default: `origin/main`)
 - **Launch at Login**: Start Canopy automatically when you log in
+
+### Workspace Links
+
+To add a clickable URL to a worktree (e.g., `http://localhost:5173`):
+
+1. Create a file named `CANOPY_URL.txt` in the worktree root directory
+2. Add a single line with your URL
+3. Canopy will display a link icon next to the worktree
+
+**Pro tip:** If using different ports for each workspace, use your post-create hook to generate this file automatically.
 
 ### GitHub CLI Setup
 

@@ -6,6 +6,7 @@ struct NewWorktreeView: View {
     @State private var branchName = ""
     @State private var isCreating = false
     @State private var errorMessage: String?
+    @FocusState private var isBranchNameFocused: Bool
 
     var body: some View {
         ZStack {
@@ -15,6 +16,7 @@ struct NewWorktreeView: View {
 
                 TextField("Branch name", text: $branchName)
                     .textFieldStyle(.roundedBorder)
+                    .focused($isBranchNameFocused)
                     .disabled(isCreating)
                     .onSubmit {
                         createWorktree()
@@ -56,6 +58,11 @@ struct NewWorktreeView: View {
         .animation(.easeInOut(duration: 0.3), value: isCreating)
         .padding()
         .frame(minWidth: 300, maxWidth: 400)
+        .onAppear {
+            branchName = ""
+            errorMessage = nil
+            isBranchNameFocused = true
+        }
     }
 
     private func createWorktree() {

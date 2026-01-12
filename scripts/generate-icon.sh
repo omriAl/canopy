@@ -41,6 +41,10 @@ sips -z 512 512   "$BASE_PNG" --out "$ICONSET_DIR/icon_256x256@2x.png" > /dev/nu
 sips -z 512 512   "$BASE_PNG" --out "$ICONSET_DIR/icon_512x512.png" > /dev/null
 sips -z 1024 1024 "$BASE_PNG" --out "$ICONSET_DIR/icon_512x512@2x.png" > /dev/null
 
+# Step 3.5: Generate web favicon
+echo "Generating web favicon..."
+sips -z 512 512 "$BASE_PNG" --out "$PROJECT_ROOT/docs/images/icon.png" > /dev/null
+
 # Step 4: Create .icns file using iconutil
 echo "Creating AppIcon.icns..."
 iconutil -c icns "$ICONSET_DIR" -o "$OUTPUT_DIR/AppIcon.icns"
@@ -58,3 +62,4 @@ echo "=== Asset generation complete ==="
 echo "Outputs:"
 echo "  - $OUTPUT_DIR/AppIcon.icns"
 echo "  - $DMG_DIR/dmg-background.png"
+echo "  - $PROJECT_ROOT/docs/images/icon.png"

@@ -9,6 +9,7 @@ final class SettingsService {
         static let launchAtLogin = "canopy.launchAtLogin"
         static let terminal = "canopy.terminal"
         static let customCLIPath = "canopy.customCLIPath"
+        static let worktreeOrder = "canopy.worktreeOrder"
     }
 
     func loadRepositories() -> [Repository] {
@@ -62,5 +63,37 @@ final class SettingsService {
 
     func saveCustomCLIPath(_ path: String?) {
         defaults.set(path, forKey: Keys.customCLIPath)
+    }
+
+    func loadWorktreeOrder(forRepositoryPath repoPath: String) -> [String]? {
+        guard let data = defaults.data(forKey: Keys.worktreeOrder),
+              let allOrders = try? JSONDecoder().decode([String: [String]].self, from: data) else {
+            return nil
+        }
+        return allOrders[repoPath]
+    }
+
+    func saveWorktreeOrder(_ order: [String], forRepositoryPath repoPath: String) {
+        var allOrders: [String: [String]] = [:]
+        if let data = defaults.data(forKey: Keys.worktreeOrder),
+           let existing = try? JSONDecoder().decode([String: [String]].self, from: data) {
+            allOrders = existing
+        }
+        allOrders[repoPath] = order
+        if let data = try? JSONEncoder().encode(allOrders) {
+            defaults.set(data, forKey: Keys.worktreeOrder)
+        }
+    }
+
+    func removeWorktreeOrder(forRepositoryPath repoPath: String) {
+        var allOrders: [String: [String]] = [:]
+        if let data = defaults.data(forKey: Keys.worktreeOrder),
+           let existing = try? JSONDecoder().decode([String: [String]].self, from: data) {
+            allOrders = existing
+        }
+        allOrders.removeValue(forKey: repoPath)
+        if let data = try? JSONEncoder().encode(allOrders) {
+            defaults.set(data, forKey: Keys.worktreeOrder)
+        }
     }
 }

@@ -7,17 +7,23 @@ struct Repository: Identifiable, Codable, Equatable {
     var postCreateHookPath: String?
     var baseBranch: String?
     var runCommand: String?
+    var worktreeExcludeFilters: [String]?
 
     var effectiveBaseBranch: String {
         baseBranch ?? "origin/main"
     }
 
-    init(path: String, name: String, postCreateHookPath: String? = nil, baseBranch: String? = nil, runCommand: String? = nil) {
+    var effectiveExcludeFilters: [String] {
+        worktreeExcludeFilters ?? []
+    }
+
+    init(path: String, name: String, postCreateHookPath: String? = nil, baseBranch: String? = nil, runCommand: String? = nil, worktreeExcludeFilters: [String]? = nil) {
         self.id = UUID()
         self.path = path
         self.name = name
         self.postCreateHookPath = postCreateHookPath
         self.baseBranch = baseBranch
         self.runCommand = runCommand
+        self.worktreeExcludeFilters = worktreeExcludeFilters
     }
 }

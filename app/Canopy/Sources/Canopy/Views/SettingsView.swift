@@ -9,6 +9,8 @@ struct SettingsView: View {
     @State private var baseBranchText: String = ""
     @State private var runCommandEditingRepository: Repository?
     @State private var runCommandText: String = ""
+    @State private var excludeFilterEditingRepository: Repository?
+    @State private var newFilterText: String = ""
 
     var body: some View {
         TabView {
@@ -217,6 +219,70 @@ struct SettingsView: View {
                                     }
                                 }
                             }
+
+                            // Worktree exclude filters
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Exclude worktrees matching:")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+
+                                let filters = repo.effectiveExcludeFilters
+                                if !filters.isEmpty {
+                                    ForEach(filters, id: \.self) { pattern in
+                                        HStack(spacing: 4) {
+                                            Text(pattern)
+                                                .font(.caption.monospaced())
+                                                .lineLimit(1)
+                                            Spacer()
+                                            Button {
+                                                var updated = filters
+                                                updated.removeAll { $0 == pattern }
+                                                appState.updateRepositoryExcludeFilters(
+                                                    repo,
+                                                    filters: updated.isEmpty ? nil : updated
+                                                )
+                                            } label: {
+                                                Image(systemName: "xmark.circle.fill")
+                                                    .foregroundStyle(.secondary)
+                                            }
+                                            .buttonStyle(.hoverPlain)
+                                        }
+                                    }
+                                } else if excludeFilterEditingRepository?.id != repo.id {
+                                    Text("None configured")
+                                        .font(.caption.monospaced())
+                                        .foregroundStyle(.tertiary)
+                                }
+
+                                if excludeFilterEditingRepository?.id == repo.id {
+                                    HStack(spacing: 4) {
+                                        TextField("e.g. ^claude/", text: $newFilterText)
+                                            .textFieldStyle(.roundedBorder)
+                                            .font(.caption.monospaced())
+                                            .onSubmit {
+                                                addExcludeFilter(to: repo)
+                                            }
+                                        Button("Add") {
+                                            addExcludeFilter(to: repo)
+                                        }
+                                        .font(.caption)
+                                        .buttonStyle(.hoverPlain)
+                                        Button("Done") {
+                                            excludeFilterEditingRepository = nil
+                                            newFilterText = ""
+                                        }
+                                        .font(.caption)
+                                        .buttonStyle(.hoverPlain)
+                                    }
+                                } else {
+                                    Button("Add Filter...") {
+                                        excludeFilterEditingRepository = repo
+                                        newFilterText = ""
+                                    }
+                                    .font(.caption)
+                                    .buttonStyle(.hoverPlain)
+                                }
+                            }
                         }
                     }
                     .contentShape(Rectangle())
@@ -248,6 +314,19 @@ struct SettingsView: View {
                 appState.addRepository(at: url.path)
             }
         }
+    }
+
+    private func addExcludeFilter(to repo: Repository) {
+        let pattern = newFilterText.trimmingCharacters(in: .whitespaces)
+        guard !pattern.isEmpty else { return }
+        guard (try? NSRegularExpression(pattern: pattern)) != nil else { return }
+
+        var filters = repo.effectiveExcludeFilters
+        if !filters.contains(pattern) {
+            filters.append(pattern)
+        }
+        appState.updateRepositoryExcludeFilters(repo, filters: filters)
+        newFilterText = ""
     }
 
     private var generalTab: some View {

@@ -12,6 +12,7 @@ final class AppState {
     var repositories: [Repository] = []
     var selectedRepository: Repository?
     var worktrees: [Worktree] = []
+    var worktreeOrder: [String]?
     var isLoading = false
     var launchAtLogin = false
     var selectedTerminal: Terminal = .warp
@@ -64,6 +65,9 @@ final class AppState {
 
     func removeRepositories(at indexSet: IndexSet) {
         let removingSelected = indexSet.contains { repositories[$0].id == selectedRepository?.id }
+        for index in indexSet {
+            settingsService.removeWorktreeOrder(forRepositoryPath: repositories[index].path)
+        }
         repositories.remove(atOffsets: indexSet)
         settingsService.saveRepositories(repositories)
 
@@ -125,6 +129,62 @@ final class AppState {
                 selectedRepository = repositories[index]
             }
         }
+    }
+
+    func updateRepositoryExcludeFilters(_ repository: Repository, filters: [String]?) {
+        if let index = repositories.firstIndex(where: { $0.id == repository.id }) {
+            repositories[index].worktreeExcludeFilters = filters
+            settingsService.saveRepositories(repositories)
+
+            if selectedRepository?.id == repository.id {
+                selectedRepository = repositories[index]
+            }
+        }
+    }
+
+    var filteredWorktrees: [Worktree] {
+        let filters = selectedRepository?.effectiveExcludeFilters ?? []
+        guard !filters.isEmpty else { return worktrees }
+
+        let regexes = filters.compactMap { pattern -> NSRegularExpression? in
+            try? NSRegularExpression(pattern: pattern)
+        }
+        guard !regexes.isEmpty else { return worktrees }
+
+        return worktrees.filter { worktree in
+            let name = worktree.branchName
+            let range = NSRange(name.startIndex..., in: name)
+            return !regexes.contains { $0.firstMatch(in: name, range: range) != nil }
+        }
+    }
+
+    var orderedFilteredWorktrees: [Worktree] {
+        let filtered = filteredWorktrees
+        guard let order = worktreeOrder, !order.isEmpty else { return filtered }
+
+        var byPath = [String: Worktree]()
+        for wt in filtered { byPath[wt.path] = wt }
+
+        var result: [Worktree] = []
+        for path in order {
+            if let wt = byPath.removeValue(forKey: path) {
+                result.append(wt)
+            }
+        }
+        // Append new worktrees not in persisted order, preserving git order
+        for wt in filtered where byPath[wt.path] != nil {
+            result.append(wt)
+        }
+        return result
+    }
+
+    func moveWorktree(from source: IndexSet, to destination: Int) {
+        var ordered = orderedFilteredWorktrees
+        ordered.move(fromOffsets: source, toOffset: destination)
+        let newOrder = ordered.map { $0.path }
+        worktreeOrder = newOrder
+        guard let repoPath = selectedRepository?.path else { return }
+        settingsService.saveWorktreeOrder(newOrder, forRepositoryPath: repoPath)
     }
 
     // MARK: - Process Management
@@ -229,6 +289,7 @@ final class AppState {
 
         do {
             worktrees = try await worktreeService.listWorktrees(in: repo.path)
+            worktreeOrder = settingsService.loadWorktreeOrder(forRepositoryPath: repo.path)
             // Refresh cached URLs from CANOPY_URL.txt files
             processManager.refreshURLs(for: worktrees.map { $0.path })
             // Fetch PR info for all worktrees

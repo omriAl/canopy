@@ -91,19 +91,31 @@ struct MenuBarMenuView: View {
                     Spacer()
                 }
                 .padding()
-            } else if appState.worktrees.isEmpty {
-                Text("No worktrees")
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(appState.worktrees) { worktree in
-                            WorktreeRow(worktree: worktree)
-                        }
+            } else if appState.orderedFilteredWorktrees.isEmpty {
+                VStack(spacing: 4) {
+                    Text("No worktrees")
+                        .foregroundStyle(.secondary)
+                    if !appState.worktrees.isEmpty {
+                        Text("\(appState.worktrees.count) hidden by filters")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
                     }
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+            } else {
+                List {
+                    ForEach(appState.orderedFilteredWorktrees) { worktree in
+                        WorktreeRow(worktree: worktree)
+                            .listRowInsets(EdgeInsets())
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                    }
+                    .onMove { source, destination in
+                        appState.moveWorktree(from: source, to: destination)
+                    }
+                }
+                .listStyle(.plain)
                 .frame(maxHeight: 300)
             }
         } else {
